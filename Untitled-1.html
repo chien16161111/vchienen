@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dành Riêng Cho Em 💕</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            backdrop-filter: blur(10px);
+        }
+
+        .login-form {
+            display: block;
+        }
+
+        .content {
+            display: none;
+            animation: fadeIn 1s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 2em;
+        }
+
+        .heart {
+            font-size: 3em;
+            color: #ff6b6b;
+            animation: heartbeat 1.5s ease-in-out infinite;
+            margin: 20px 0;
+        }
+
+        @keyframes heartbeat {
+            0%, 50%, 100% { transform: scale(1); }
+            25%, 75% { transform: scale(1.1); }
+        }
+
+        input[type="password"] {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 16px;
+            margin: 20px 0;
+            text-align: center;
+            transition: border-color 0.3s;
+        }
+
+        input[type="password"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.3s;
+            margin: 10px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+        }
+
+        .error {
+            color: #ff6b6b;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .photo-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .photo-placeholder {
+            background: linear-gradient(135deg, #ffeaa7, #fab1a0);
+            height: 150px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.9em;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .photo-placeholder:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .message {
+            background: rgba(255, 182, 193, 0.3);
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+            border-left: 4px solid #ff6b6b;
+        }
+
+        .floating-hearts {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .floating-heart {
+            position: absolute;
+            color: rgba(255, 107, 107, 0.6);
+            font-size: 20px;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(-100px) rotate(360deg); opacity: 0; }
+        }
+
+        /* Modal cho ảnh */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            max-width: 90%;
+            max-height: 90%;
+        }
+
+        .modal img, .modal video {
+            max-width: 100%;
+            max-height: 400px;
+            border-radius: 10px;
+            margin: 10px 0;
+        }
+
+        .modal video {
+            width: 100%;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            position: absolute;
+            right: 15px;
+            top: 10px;
+        }
+
+        .close:hover {
+            color: #000;
+        }
+    </style>
+</head>
+<body>
+    <div class="floating-hearts" id="floatingHearts"></div>
+    
+    <div class="container">
+        <div class="login-form" id="loginForm">
+            <h1>🔐 Chìa Khóa Bí Mật</h1>
+            <div class="heart">💖</div>
+            <p>Nhập mật khẩu để mở khóa món quà dành riêng cho chị:</p>
+            <input type="password" id="passwordInput" placeholder="Mật khẩu của em..." maxlength="20">
+            <br>
+            <button onclick="checkPassword()">Mở Khóa 🗝️</button>
+            <div class="error" id="errorMsg">Sai mật khẩu rồi! Thử lại nhé 😊</div>
+        </div>
+
+        <div class="content" id="content">
+            <h1>💕 Dành Riêng Cho Em 💕</h1>
+            <div class="heart">❤️</div>
+            
+            <div class="message">
+                <h3>Lời Nhắn Từ emmm iu đây:</h3>
+                <p>"chị là ánh sáng trong cuộc đời em, là lý do em mỉm cười mỗi ngày. mỏi cổ thế nhờ! 💖"</p>
+            </div>
+
+            <div class="photo-gallery">
+                <div class="photo-placeholder" onclick="showPhoto(1)">
+                    📸<br>Ảnh của<br>chúng mình<br><small>👆 Nhấn để xem</small>
+                </div>
+                <div class="photo-placeholder" onclick="showPhoto(2)">
+                    🌹<br>Hoa hồng<br>cho em<br><small>👆 Nhấn để xem</small>
+                </div>
+                <div class="photo-placeholder" onclick="showPhoto(3)">
+                    🎁<br>Quà tặng<br>đặc biệt<br><small>👆 Nhấn để xem</small>
+                </div>
+                <div class="photo-placeholder" onclick="showPhoto(4)">
+                    💑<br>Kỷ niệm<br>đẹp nhất<br><small>👆 Nhấn để xem</small>
+                </div>
+            </div>
+
+            <div class="message">
+                <h3>💌 Thư Tình:</h3>
+                <p>chị có biết không? Mỗi ngày trôi qua, em lại yêu chị nhiều hơn một chút. chị là món quà tuyệt vời nhất mà cuộc đời trao cho em. Cảm ơn chị vì đã đến bên em! 🥰</p>
+            </div>
+
+            <button onclick="showSurprise()">Còn một bất ngờ nữa! 🎉</button>
+            
+            <div id="surprise" style="display: none; margin-top: 20px;">
+                <div class="heart">💍</div>
+                <h2>em yêu chị mãi mãi! 💕</h2>
+                <p>Forever and always... 💖✨</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal để hiển thị ảnh/video -->
+    <div id="photoModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h3 id="modalTitle"></h3>
+            <div id="mediaContainer">
+                <img id="modalImage" src="" alt="" style="display: none;">
+                <video id="modalVideo" controls style="display: none;">
+                    <source src="" type="video/mp4">
+                    Trình duyệt không hỗ trợ video.
+                </video>
+            </div>
+            <p id="modalDescription"></p>
+        </div>
+    </div>
+
+    <script>
+        // Mật khẩu - bạn có thể thay đổi ở đây
+        const correctPassword = "2005";
+        
+        // Dữ liệu ảnh/video - bạn có thể thay đổi link ở đây
+        const photos = {
+            1: {
+                title: "💕 Video Của Chúng Mình",
+                media: "https://www.w3schools.com/html/mov_bbb.mp4", // Link video
+                type: "video", // "image" hoặc "video"
+                description: "không có đâu mà nhấn! 💖"
+            },
+            2: {
+                title: "🌹 Hoa Hồng Cho chị", 
+                media: "https://via.placeholder.com/400x300/ffb3ba/ffffff?text=🌹+Rose+For+You", // Link ảnh
+                type: "image",
+                description: "tạm thời chưa biết làm ! 🌹"
+            },
+            3: {
+                title: "🎁 Video Quà Tặng",
+                media: "https://www.w3schools.com/html/movie.mp4", // Link video
+                type: "video",
+                description: "Món quà nhỏ thể hiện tình yêu to lớn của chị! 🎁"
+            },
+            4: {
+                title: "💑 Kỷ Niệm Đẹp Nhất",
+                media: "https://via.placeholder.com/400x300/ffffba/ffffff?text=💑+Sweet+Memory", // Link ảnh
+                type: "image", 
+                description: "Ngày đầu tiên em gặp chị... 💑"
+            }
+        };
+        
+        function showPhoto(photoId) {
+            const photo = photos[photoId];
+            const modalImage = document.getElementById('modalImage');
+            const modalVideo = document.getElementById('modalVideo');
+            
+            document.getElementById('modalTitle').textContent = photo.title;
+            document.getElementById('modalDescription').textContent = photo.description;
+            
+            // Ẩn cả ảnh và video trước
+            modalImage.style.display = 'none';
+            modalVideo.style.display = 'none';
+            
+            if (photo.type === 'video') {
+                // Hiển thị video
+                modalVideo.src = photo.media;
+                modalVideo.style.display = 'block';
+            } else {
+                // Hiển thị ảnh
+                modalImage.src = photo.media;
+                modalImage.style.display = 'block';
+            }
+            
+            document.getElementById('photoModal').style.display = 'block';
+        }
+        
+        function closeModal() {
+            const modal = document.getElementById('photoModal');
+            const modalVideo = document.getElementById('modalVideo');
+            
+            // Dừng video khi đóng modal
+            if (!modalVideo.paused) {
+                modalVideo.pause();
+            }
+            
+            modal.style.display = 'none';
+        }
+        
+        // Đóng modal khi click bên ngoài
+        window.onclick = function(event) {
+            const modal = document.getElementById('photoModal');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+        
+        function checkPassword() {
+            const input = document.getElementById('passwordInput').value;
+            const errorMsg = document.getElementById('errorMsg');
+            
+            if (input.toLowerCase() === correctPassword.toLowerCase()) {
+                document.getElementById('loginForm').style.display = 'none';
+                document.getElementById('content').style.display = 'block';
+                createFloatingHearts();
+            } else {
+                errorMsg.style.display = 'block';
+                document.getElementById('passwordInput').value = '';
+                setTimeout(() => {
+                    errorMsg.style.display = 'none';
+                }, 3000);
+            }
+        }
+
+        function showSurprise() {
+            document.getElementById('surprise').style.display = 'block';
+            document.getElementById('surprise').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function createFloatingHearts() {
+            const heartsContainer = document.getElementById('floatingHearts');
+            const hearts = ['💖', '💕', '💗', '💓', '💝', '💟', '❤️', '🧡', '💛', '💚', '💙', '💜'];
+            
+            setInterval(() => {
+                const heart = document.createElement('div');
+                heart.className = 'floating-heart';
+                heart.innerHTML = hearts[Math.floor(Math.random() * hearts.length)];
+                heart.style.left = Math.random() * 100 + '%';
+                heart.style.animationDelay = Math.random() * 2 + 's';
+                heart.style.animationDuration = (Math.random() * 3 + 4) + 's';
+                
+                heartsContainer.appendChild(heart);
+                
+                setTimeout(() => {
+                    heart.remove();
+                }, 6000);
+            }, 500);
+        }
+
+        // Cho phép nhấn Enter để đăng nhập
+        document.getElementById('passwordInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                checkPassword();
+            }
+        });
+    </script>
+</body>
+</html>
